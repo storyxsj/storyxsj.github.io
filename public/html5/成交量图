@@ -1,0 +1,259 @@
+//柱形图
+			function columnCharts(canvasId,dataList,wordList) {
+				this.canvas=null;
+				this.ctx=null;
+				this.colorList=new Array();
+				this.sectorList=new Array();
+				this.wordList=null;
+				this.dataList=new Array();
+				this.charSize={width:0,height:0};
+				this.scale=1;
+				this.changeMark=-1;//当前激活对象
+				this.maxData=0;
+				this.originX=84;
+				this.originY=245;
+				this.charHeight=192;
+				this.charWidth=910;
+				this.boxWidth=48;
+				this.spaceWidth=116;
+				this.firstSpace=41;
+				this.spaceHeight=48;
+				this.dataSpace=0;
+				this.requestId=undefined;
+				this.cntr=0;
+				this.countPercent=0;
+				this.init(canvasId,dataList,wordList);
+			}
+			columnCharts.prototype={
+				init:function(canvasId,dataList,wordList){
+					this.canvas=document.createElement('canvas');
+
+					document.getElementById(canvasId).innerHTML = "";//获取canvas
+					document.getElementById(canvasId).appendChild(this.canvas);//获取canvas
+
+					this.ctx=this.canvas.getContext('2d');//2d绘画模式
+					this.wordList=wordList;
+					this.dataList=dataList;
+					//颜色列表
+					this.colorList=['rgba(187,202,196,.5)','rgba(187,202,196,1)','rgba(68,79,100,.65)','rgba(68,79,100,1)','rgba(195,188,149,1)','rgba(242,204,0,1)'];
+					this.loop();
+					var self=this;
+					window.addEventListener('resize', winResize);
+					function winResize(){
+						if(document.getElementById(canvasId)!=null){
+							self.canvas=document.createElement('canvas');
+							document.getElementById(canvasId).innerHTML = "";//获取canvas
+							document.getElementById(canvasId).appendChild(self.canvas);//获取canvas
+							self.ctx=self.canvas.getContext('2d');//2d绘画模式
+							//self.countPercent=0;
+							self.cntr=0;
+							self.loop();
+						}else{
+							window.removeEventListener('resize', winResize);
+						}
+					}
+				},
+				loop:function(){
+					var self=this;
+					this.requestId=requestAnimationFrame(self.loop.bind(this));//requestID 是一个长整型非零值,作为一个唯一的标识符.你可以将该值作为参数传给
+						//这就要求你的动画函数执行会先于浏览器重绘动作。通常来说，被调用的频率是每秒60次
+					if(this.cntr++ % 1 ==0){//多少次循环，执行添加一个圆
+						var x=0;
+						this.resize();
+						if(this.countPercent<100){
+							this.countPercent=this.countPercent+2;
+						}else{
+						    this.stop();
+						    this.canvas.addEventListener("mousemove",function(ev){
+								var ev=ev||window.event;
+								var tempActive=self.inColumn(ev);
+								if(self.changeMark!=tempActive){
+									self.changeMark=tempActive;
+									self.chart();
+								}
+							});
+						}
+					}
+				},
+				stop:function(){
+					if(this.requestId){
+						window.cancelAnimationFrame(this.requestId);
+						this.requestId=undefined;
+					}
+				},
+				inColumn:function(ev){
+					var tempActive=-1;
+					var x=0;
+					for (x in this.sectorList){
+						if(ev.offsetX>this.sectorList[x].left&&ev.offsetX<this.sectorList[x].right&&ev.offsetY>this.sectorList[x].top-8&&ev.offsetY<this.sectorList[x].bottom){
+							tempActive=x;
+						}
+					}
+					return tempActive;
+				},
+				resize:function(){
+					this.charSize={width:window.innerWidth>1367?this.canvas.parentNode.clientWidth-70:this.canvas.parentNode.clientWidth,height:286};
+					this.scale=this.charSize.width/1122;
+					this.canvas.width=this.charSize.width;
+					this.canvas.height=this.charSize.height;
+					this.originX=84*this.scale>60?84*this.scale:60;
+					this.charHeight=192;
+					this.charWidth=910*this.scale;
+					this.boxWidth=48*this.scale;
+					this.spaceWidth=116*this.scale;
+					this.firstSpace=41*this.scale;
+					this.chart();
+				},
+				chart:function(){
+					this.update();
+					this.default();
+					this.column();
+					this.hoverTip();
+				},
+				update:function(){
+					//初始化数据
+					var x=0;
+					this.maxData=0;
+					for (x in this.dataList)
+					{
+						this.sectorList[x]={
+							type:this.dataList[x].type,
+							num:this.dataList[x].num,
+							now:this.dataList[x].now
+						};
+						if(!this.dataList[x].now){
+							if(x==this.changeMark){
+								this.sectorList[x].color=this.colorList[1];
+							}else{
+								this.sectorList[x].color=this.colorList[0];
+							}
+							this.sectorList[x].poitColor=this.colorList[4];
+							this.sectorList[x].lineColor=this.colorList[4];
+						}else{
+							if(x==this.changeMark){
+								this.sectorList[x].color=this.colorList[3];
+							}else{
+								this.sectorList[x].color=this.colorList[2];
+							}
+							this.sectorList[x].poitColor=this.colorList[5];
+							if(x>0&&this.sectorList[x-1].now){
+								this.sectorList[x].lineColor=this.colorList[5];
+							}else{
+								this.sectorList[x].lineColor=this.colorList[4];
+							}
+						}
+						if(this.dataList[x].num>this.maxData){
+							this.maxData=this.dataList[x].num;
+						}
+					}
+					//坐标单位
+					if(this.maxData<10){
+						this.maxData=10;
+					}
+					var temp=Math.ceil(this.maxData/4);//31
+					if(temp%10>0){
+						this.dataSpace=Math.ceil(temp/10)*10;
+						this.maxData=this.dataSpace*4+10;
+					}else{
+						this.dataSpace=temp;
+						this.maxData=this.dataSpace*4;
+					}
+					//计算位置
+					var x=0;
+					for (x in this.dataList)
+					{
+						this.sectorList[x].bottom=this.originY;
+						this.sectorList[x].top=this.originY-(this.sectorList[x].num/this.maxData*this.charHeight)*this.countPercent/100;
+						this.sectorList[x].left=this.originX+this.firstSpace+this.spaceWidth*x;
+						this.sectorList[x].right=this.originX+this.firstSpace+this.spaceWidth*x+this.boxWidth;
+						this.sectorList[x].CenterX=this.originX+this.firstSpace+this.spaceWidth*x+this.boxWidth/2;
+						this.sectorList[x].height=this.sectorList[x].num/this.maxData*this.charHeight*this.countPercent/100;
+					}
+				},
+				default:function(){
+					this.ctx.save();
+					this.ctx.beginPath();
+					this.ctx.fillStyle = "#f9f9f9";
+					this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
+					this.ctx.font = "14px Microsoft YaHei";
+					this.ctx.fillStyle="#444f64";
+					this.ctx.textAlign="left";
+					this.ctx.fillText(this.wordList.yname, 25,30);
+					this.ctx.translate(this.originX,this.originY);//移动到坐标原点
+					this.ctx.moveTo(0,0);
+					this.ctx.lineTo(this.charWidth,0);
+					this.ctx.strokeStyle="#363e4f";
+					this.ctx.lineWidth=2;
+					this.ctx.stroke();
+					//循环画虚线
+					this.ctx.lineWidth=1;
+					this.ctx.strokeStyle="#cccccc";
+					var poitX=0;
+					for(var i=0;i<4;i++){
+						poitX=-(i+1)*this.spaceHeight;
+						this.ctx.dashedLineTo(0,poitX,this.charWidth,poitX,3);
+						this.ctx.fillStyle="#cccccc";
+						this.ctx.arc(0,poitX, 3.5, 0, 2 * Math.PI);
+						this.ctx.fill();
+						this.ctx.font = "16px Microsoft YaHei";
+						this.ctx.fillStyle="#444f64";
+						this.ctx.textAlign="right";
+						this.ctx.fillText(this.dataSpace*(i+1), -15,poitX+6);
+					}
+
+					this.ctx.font = "14px Microsoft YaHei";
+					this.ctx.fillStyle="#444f64";
+					this.ctx.textAlign="left";
+					this.ctx.fillText(this.wordList.xname, this.charWidth+5,4);
+					this.ctx.closePath();
+					this.ctx.restore();
+				},
+				column:function(){
+					var x=0;
+					for (x in this.sectorList){
+						this.ctx.beginPath();
+						this.ctx.fillStyle = this.sectorList[x].color;
+						this.ctx.fillRect(this.sectorList[x].left,this.sectorList[x].top,this.boxWidth,this.sectorList[x].height);
+						this.ctx.fillStyle =this.sectorList[x].poitColor;
+						if(x==this.changeMark){
+							this.ctx.arc(this.sectorList[x].CenterX,this.sectorList[x].top, 6, 0, 2 * Math.PI);
+						}else{
+							this.ctx.arc(this.sectorList[x].CenterX,this.sectorList[x].top, 5, 0, 2 * Math.PI);
+						}
+						this.ctx.fill();
+						this.ctx.closePath();
+						this.ctx.beginPath();
+						if(x>0){
+							this.ctx.strokeStyle=this.sectorList[x].lineColor;
+							this.ctx.lineWidth=2;
+							this.ctx.moveTo(this.sectorList[x-1].CenterX,this.sectorList[x-1].top);
+							this.ctx.lineTo(this.sectorList[x].CenterX,this.sectorList[x].top);
+							this.ctx.stroke();
+						}
+						this.ctx.closePath();
+						this.ctx.font = "14px Microsoft YaHei";
+						this.ctx.fillStyle="#444f64";
+						this.ctx.textAlign="center";
+						this.ctx.fillText(this.sectorList[x].type,this.sectorList[x].CenterX,this.sectorList[x].bottom+22);
+					}
+				},
+				hoverTip:function(){
+					if(this.changeMark!=-1){
+						this.ctx.fillStyle="rgba(54,62,79,0.95)";
+						this.ctx.font = "14px Microsoft YaHei";
+						this.ctx.textAlign="left";
+						if(this.changeMark==0){
+							this.ctx.fillRect(this.sectorList[this.changeMark].CenterX+8,this.sectorList[this.changeMark].top-40,130,55);
+							this.ctx.fillStyle="#fff";
+							this.ctx.fillText(this.sectorList[this.changeMark].type,this.sectorList[this.changeMark].CenterX+18,this.sectorList[this.changeMark].top-18);
+							this.ctx.fillText(this.wordList.tipname+this.sectorList[this.changeMark].num+this.wordList.tipUnit,this.sectorList[this.changeMark].CenterX+18,this.sectorList[this.changeMark].top+5);
+						}else{
+							this.ctx.fillRect(this.sectorList[this.changeMark].CenterX-8,this.sectorList[this.changeMark].top+16,-130,-55);
+							this.ctx.fillStyle="#fff";
+							this.ctx.fillText(this.sectorList[this.changeMark].type,this.sectorList[this.changeMark].CenterX-130,this.sectorList[this.changeMark].top-18);
+							this.ctx.fillText(this.wordList.tipname+this.sectorList[this.changeMark].num+this.wordList.tipUnit,this.sectorList[this.changeMark].CenterX-130,this.sectorList[this.changeMark].top+5);
+						}
+					}
+
+				}
+			};

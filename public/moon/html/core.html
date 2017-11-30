@@ -1,0 +1,50 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8">
+
+<script>
+
+$(document).ready(function() {
+	console.info("ready");
+} );
+
+function query(tableId){
+	var url = "menu.do";
+	
+	te3ajax(url,showDataTable,tableId);
+}
+
+function query2(tableId){
+	var url = "http://localhost:9999/akso";
+	te3ajaxp(url,showDataTable,tableId);
+}
+
+</script>
+
+</head>
+
+
+<body>
+ <div  ><!--页面层容器-->
+ 
+ <p onclick="query('example')"> 非跨域发送Ajaxy请求</p>
+ 
+  <p onclick="query2('example')"> 跨域</p>
+ 
+  <table id="example" class="display cell-border" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Start date</th>
+                <th>Salary</th>
+            </tr>
+        </thead>
+       
+	</table>
+</div>
+</body>
+
+</html>

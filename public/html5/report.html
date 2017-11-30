@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>canvas-data</title>
+	<style>
+		.data{
+			width: 800px;
+			margin: auto;
+		}
+		.title{
+			text-align: center;
+			font-size: 20px;
+			margin: 20px 0 0  0;
+		}
+	</style>
+</head>
+<body>	
+	<p class="title">横向柱状图</p>
+	<div id="horiz-data" class="data"></div>
+	<p class="title">竖向柱状图</p>
+	<div id="club-data" class="data"></div>
+	<p class="title">饼状图</p>
+	<div id="sector-data" class="data"></div>
+	<p class="title">饼状图2</p>
+	<div id="sector-data2" class="data"></div>
+	<script>
+			'use strict';
+			//画虚线方法
+			CanvasRenderingContext2D.prototype.dashedLineTo = function (fromX, fromY, toX, toY, pattern) {
+			    // default interval distance -> 5px
+			    if (typeof pattern === "undefined") {
+			        pattern = 5;
+			    }
+			    // calculate the delta x and delta y
+			    var dx = (toX - fromX);
+			    var dy = (toY - fromY);
+			    var distance = Math.floor(Math.sqrt(dx*dx + dy*dy));
+			    var dashlineInteveral = (pattern <= 0) ? distance : (distance/pattern);
+			    var deltay = (dy/distance) * pattern;
+			    var deltax = (dx/distance) * pattern;
+			    // draw dash line
+			    this.beginPath();
+			    for(var dl=0; dl<dashlineInteveral; dl++) {
+			        if(dl%2) {
+			            this.lineTo(fromX + dl*deltax, fromY + dl*deltay);
+			        } else {
+			            this.moveTo(fromX + dl*deltax, fromY + dl*deltay);
+			        }
+			    }
+			    this.stroke();
+			};
+			
+			//扇形
+			CanvasRenderingContext2D.prototype.sector = function(x,y,r,sector){
+			    this.save();
+			    this.beginPath();
+			    this.moveTo(x,y);
+			    this.arc(x,y,r,sector.starAng*Math.PI/180,sector.endAng*Math.PI/180,false);
+			    this.closePath();
+			    this.restore();
+			    return this;
+			}
+			CanvasRenderingContext2D.prototype.roundRect = function(x,y,width,height,radius){
+			    this.save();
+			    this.beginPath();
+			    this.translate(x,y);
+			    //从右下角顺时针绘制，弧度从0到1/2PI
+			    this.arc(width-radius,height-radius,radius,0,Math.PI/2);
+			    //矩形下边线
+			     this.lineTo(radius,height);
+			    //左下角圆弧，弧度从1/2PI到PI
+			    this.arc(radius,height-radius,radius,Math.PI/2,Math.PI);
+			    //矩形左边线
+			    this.lineTo(0,radius);
+			    //左上角圆弧，弧度从PI到3/2PI
+			    this.arc(radius,radius,radius,Math.PI,Math.PI*3/2);
+			    //上边线
+			    this.lineTo(width-radius,0);
+			    //右上角圆弧
+			    this.arc(width-radius,radius,radius,Math.PI*3/2,Math.PI*2);
+		        //右边线
+		    	this.lineTo(width,height-radius);
+
+			    this.closePath();
+			    this.restore();
+			    return this;
+			}
+			
+			
+			function sectorCharts(canvasId,dataList){
+				this.init(canvasId,dataList);
+			}
+			sectorCharts.prototype={
+				canvas:null,
+				ctx:null,
+				colorList:new Array(),
+				sectorList:new Array(),
+				dataList:new Array(),
+				charSize:{width:0,height:0},
+				changeMark:-1,//当前激活对象
+				dataSum:0,
+				centerX:165,
+				centerY:130,
+				tipX:345,
+				tipY:84,
+				r:110,
+				r2:60,
+				requestId:undefined,
+				cover:360,
+				cntr:0,
+				init:function(canvasId,dataList,wordList){
+					this.canvas=document.createElement('canvas');
+					document.getElementById(canvasId).innerHTML = "";//获取canvas
+					document.getElementById(canvasId).appendChild(this.canvas);//获取canvas
+
+					this.ctx=this.canvas.getContext('2d');//2d绘画模式
+					this.dataList=dataList;
+					this.colorList=['#46c8a4','#284f55','#363e4f','#4e5c76','#4a96a1'];
+					this.loop();
+					var self=this;
+					window.addEventListener('resize', winResize);
+					function winResize(){
+						if(document.getElementById(canvasId)!=null){
+							self.canvas=document.createElement('canvas');
+							document.getElementById(canvasId).innerHTML = "";//获取canvas
+							document.getElementById(canvasId).appendChild(self.canvas);//获取canvas
+							self.ctx=self.canvas.getContext('2d');//2d绘画模式
+							//self.countPercent=0;
+							self.cover=0;
+							self.cntr=0;
+							self.loop();
+						}else{
+							window.removeEventListener('resize', winResize);
+						}
+					}
+				},
+				loop:function(){
+					var self=this;
+					this.requestId=requestAnimationFrame(self.loop.bind(this));//requestID 是一个长整型非零值,作为一个唯一的标识符.你可以将该值作为参数传给
+						//这就要求你的动画函数执行会先于浏览器重绘动作。通常来说，被调用的频率是每秒60次
+					if(this.cntr++ % 1 ==0){//多少次循环，执行添加一个圆
+						this.resize();//
+						this.ctx.fillStyle ="#fff";
+						var sectorCover={starAng:0,endAng:this.cover};
+				    	this.ctx.sector(this.centerX,this.centerY,this.r,sectorCover).fill();
+				    	this.cover=this.cover-8;
+				    	this.ctx.save();
+						this.ctx.beginPath();
+				    	this.ctx.fillStyle = '#444f64';
+						this.ctx.font = "16px Microsoft YaHei";
+						this.ctx.textAlign="center";
+						this.ctx.fillText("活动总数", this.centerX,this.centerY-3);
+						this.ctx.fillText(this.dataSum, this.centerX,this.centerY+17);
+						this.ctx.closePath();
+			    		this.ctx.restore();
+					}
+					if(this.cover<0){
+						this.stop();
+						this.canvas.addEventListener("mousemove",function(ev){
+							var ev=ev||window.event;
+
+							if(self.inSector(ev)){
+							   self.chart();
+							}
+						});
+					}
+				},
+				stop:function(){
+					if(this.requestId){
+						window.cancelAnimationFrame(this.requestId);
+						this.requestId=undefined;
+					}
+				},
+				
+				inSector:function(ev){},
+				
+				inSector2:function(ev){
+					var tempActive=-1,hoverAng=0,x=0,
+					length=Math.sqrt((ev.offsetX-this.centerX)*(ev.offsetX-this.centerX)+(ev.offsetY-this.centerY)*(ev.offsetY-this.centerY)),
+			    	lengthX=ev.offsetX-this.centerX,
+			    	lengthY=ev.offsetY-this.centerY,
+			    	ang=Math.atan(Math.abs((ev.offsetY-this.centerY)/(ev.offsetX-this.centerX)))/Math.PI*180;
+			    	if(length<=this.r&&length>=this.r2){
+			    		if(lengthX>=0&&lengthY>=0){
+			    			hoverAng=ang;
+			    		}else if(lengthX<=0&&lengthY>=0){
+			    			hoverAng=180-ang;
+			    		}else if(lengthX<=0&&lengthY<=0){
+			    			hoverAng=180+ang;
+			    		}else if(lengthX>=0&&lengthY){
+			    			hoverAng=360-ang;
+			    		}
+			    		for (x in this.sectorList){
+			    			if(hoverAng>this.sectorList[x].starAng&&hoverAng<this.sectorList[x].endAng){
+			    				tempActive=x;
+			    			}
+			    		}
+			    	}else{
+			    		tempActive=-1;
+			    	}
+			    	if(this.changeMark!=tempActive){
+			    		this.changeMark=tempActive;
+			    		return true;
+			    	}else{
+			    		this.changeMark=tempActive;
+			    		return false;
+			    	}
+				},
+				resize:function(){
+					this.charSize={width:this.canvas.parentNode.clientWidth,height:310};
+					this.canvas.width=this.charSize.width;
+					this.canvas.height=this.charSize.height;
+					this.chart();
+				},
+				chart:function(){
+					this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+					this.update();
+					this.dataSector();
+					//this.hoverTip();
+				},
+				update:function(){
+					//初始化数据
+					this.dataSum=0;
+					var x=0;
+				    for (x in this.dataList)
+					{
+						this.dataSum=this.dataSum+this.dataList[x].num;
+						this.sectorList[x]={
+							color:this.colorList[x],
+							type:this.dataList[x].type,
+							num:this.dataList[x].num,
+						};
+					}
+					var ang=0,sumAng=0;
+					for (x in this.sectorList)
+					{
+						this.sectorList[x].percent=((this.sectorList[x].num/this.dataSum)*100).toFixed(1)+'%';
+						ang=parseInt((this.sectorList[x].num/this.dataSum)*360);
+						this.sectorList[x].angHalf=ang/2;
+						this.sectorList[x].starAng=sumAng;
+						sumAng=sumAng+ang;
+						this.sectorList[x].endAng=sumAng;
+						if(x==this.sectorList.length-1){
+							this.sectorList[x].endAng=360;
+						}
+					}
+				},
+				dataSector:function(){
+					var rectY=50,x=0,poitX=0,poitY=0;
+					for (x in this.sectorList)
+					{
+						//数据提示
+				    	if(x==this.changeMark&&this.sectorList.length!=1){
+				    		poitX=this.centerX+Math.cos(this.sectorList[x].starAng*Math.PI/180+this.sectorList[x].angHalf*Math.PI/180)*this.r*0.06;
+				    		poitY=this.centerY+Math.sin(this.sectorList[x].starAng*Math.PI/180+this.sectorList[x].angHalf*Math.PI/180)*this.r*0.06;
+				    	}else{
+				    		poitX=this.centerX;
+				    		poitY=this.centerY;
+				    	}
+						//扇形
+						this.ctx.fillStyle =this.sectorList[x].color;
+				    	this.ctx.sector(poitX,poitY,this.r,this.sectorList[x]).fill();
+				    	this.ctx.strokeStyle="#fff";
+				    	this.ctx.lineWidth =4;
+				    	this.ctx.sector(poitX,poitY,this.r,this.sectorList[x]).stroke();
+				    	this.ctx.fillStyle="#fff";
+				    	this.ctx.sector(poitX,poitY,this.r2,this.sectorList[x]).fill();
+				    	//右边数据
+				    	this.dataTip(x,this.sectorList[x]);
+					}
+					//画总数据提示
+					this.ctx.save();
+					this.ctx.beginPath();
+					this.ctx.fillStyle = '#444f64';
+					this.ctx.font = "16px Microsoft YaHei";
+					this.ctx.textAlign="center";
+					this.ctx.fillText("活动总数", this.centerX,this.centerY-3);
+					this.ctx.fillText(this.dataSum, this.centerX,this.centerY+17);
+					this.ctx.closePath();
+			    	this.ctx.restore();
+					//数据提示框
+					if(this.changeMark!=-1){
+						this.tipBox();
+					}
+
+				},
+				tipBox:function(){
+					var x=this.changeMark;
+					var poitX=this.centerX+Math.cos(this.sectorList[x].starAng*Math.PI/180+this.sectorList[x].angHalf*Math.PI/180)*this.r*0.7;
+		    		var poitY=this.centerY+Math.sin(this.sectorList[x].starAng*Math.PI/180+this.sectorList[x].angHalf*Math.PI/180)*this.r*0.7;
+		    		this.ctx.save();
+					this.ctx.beginPath();
+		    		this.ctx.fillStyle = '#fff';
+		    		this.ctx.shadowColor = "rgba(0,0,0,0.2";
+					this.ctx.shadowBlur = 6;
+					this.ctx.shadowOffsetX=3;
+					this.ctx.shadowOffsetY=3;
+					this.ctx.roundRect(poitX,poitY,124,74,4).fill();
+					this.ctx.closePath();
+			    	this.ctx.restore();
+			    	this.ctx.save();
+					this.ctx.beginPath();
+					this.ctx.strokeStyle="#29a784";
+			    	this.ctx.lineWidth =1;
+			    	this.ctx.roundRect(poitX,poitY,124,74,4).stroke();
+			    	this.ctx.fillStyle = '#2c2f34';
+			    	this.ctx.font = "16px Microsoft YaHei";
+			    	this.ctx.textAlign="left";
+					this.ctx.fillText(this.sectorList[x].type, poitX+12,poitY+30);
+					this.ctx.fillText("比例："+this.sectorList[x].percent, poitX+12,poitY+56);
+					this.ctx.closePath();
+			    	this.ctx.restore();
+
+				},
+				dataTip:function(id,sector){
+					var linheight=26;
+					this.ctx.save();
+					this.ctx.beginPath();
+					this.ctx.font = "14px Microsoft YaHei";
+					this.ctx.arc(this.tipX,this.tipY+id*linheight,6,0,2*Math.PI);
+					this.ctx.strokeStyle=sector.color;
+			    	this.ctx.lineWidth =4;
+			    	this.ctx.stroke();
+			    	this.ctx.fillStyle = '#444f64';
+			    	this.ctx.textAlign="left";
+			    	var temp=0;
+			    	if(window.innerWidth<1600){
+			    		temp=8;
+
+			    	}
+					this.ctx.fillText(sector.type, this.tipX+20,this.tipY+id*linheight+5);
+					this.ctx.fillText(sector.percent, this.tipX+70+temp,this.tipY+id*linheight+5);
+					this.ctx.fillText(sector.num, this.tipX+130+temp,this.tipY+id*linheight+5);
+					this.ctx.closePath();
+			    	this.ctx.restore();
+				}
+			};
+			
+			
+		var colorList=['rgba(187,202,196,.5)','rgba(187,202,196,1)','rgba(68,79,100,.65)','rgba(68,79,100,1)','rgba(195,188,149,1)','rgba(242,204,0,1)'];
+		//var dataList=[{'type':'2016-02','num':100,"now":false},{'type':'2016-03','num':100,"now":false},{'type':'2016-04','num':200,"now":false},{'type':'2016-05','num':40,"now":true},{'type':'2016-06','num':28,"now":true}];
+		var dataList2=[{'type':'公益','num':40,"now":true},{'type':'其他','num':28,"now":true},{'type':'其他','num':58,"now":true},{'type':'文娱','num':48,"now":true},{'type':'学术','num':100,"now":true}];
+		//var wordList={xname:'年-月',yname:'社团数量',tipname:'活跃社团：',tipUnit:'个'};
+		//var partInfo=new horizCharts('horiz-data',dataList);
+		//var clubInfo=new columnCharts('club-data',dataList,wordList); //成交量图
+		var typeInfo=new sectorCharts('sector-data',dataList2);
+
+		var typeInfo=new sectorCharts('sector-data2',dataList2);
+		
+	</script>
+</body>
+</html>

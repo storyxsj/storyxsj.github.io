@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>诺基亚电信云管平台</title>
+<script type="text/javascript" src="../public/jtopo/js/jtopo-0.4.8-min.js"></script>
+<script type="text/javascript" src="../public/jtopo/js/jtopo.wrap.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function() {
+	html5CanvasDisplay();
+	
+});
+
+	
+	function querydb(tableId){
+		var url = "envariable_query.do?opType=test1232";
+		te3ajax(url,showDataTable,tableId);
+	}
+	
+	function query(tableId){
+		//
+		//var url = "flavor_flavorlist.do?opType=test1232";
+		var url = "menu_test.do?opType=test1232";
+		te3ajax(url,showDataTable,tableId);
+		//te3ajax(url,showDataTable,tableId+"2");
+	}
+
+	
+	
+	
+</script>
+</head>
+<body>
+
+	<div id="akso-main2">
+		<div class="breadcrumb-wrap">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-6">
+						<h4>监控台</h4>
+					</div>
+					<div class="col-sm-6 hidden-xs text-right">
+					   
+						<a onclick="working()" class="btn btn-theme-dark">刷新</a>
+					</div>
+						
+					
+				</div>
+			</div>
+		</div>
+		
+		
+		<div class="divide20"></div>
+
+		 <div class="container">
+			
+			
+			
+			
+			<div >
+				<canvas id="canvas" width="1100px" height="600px">请换用Chorome,IE10+浏览器</canvas>
+			</div>
+
+		</div>
+
+
+
+	</div>
+
+	
+</body>
+</html>
+
+
+
+

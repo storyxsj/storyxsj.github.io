@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>诺基亚电信云管平台</title>
+
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		query("","example");
+	});
+	
+	function query(data,tableId){
+		var url = "menu_query.do";
+		te3ajax(url,showDataTable,tableId);
+	}
+
+	function add(){
+		
+		layer.open({
+			  type: 2,
+			  title:'新建',
+			  area: ['700px', '450px'],
+			  fixed: true, //不固定
+			  maxmin: true,
+			  content: '../moon/menuCreat.html'
+			});
+	}
+	
+	function startwork(row,command){
+		jConfirm("确认执行该操作?", 
+				"提示信息", 
+				function(r) {
+		   			 if(r){//此处输入你要执行的操作
+		   				var tempId = String(row).split(",")[0];
+		   				var url = "menu_flavordelete.do?tempId="+tempId;
+		   				te3ajax(url,"query","example");
+		    			}
+		});
+	}
+	
+</script>
+</head>
+<body>
+
+	<div id="akso-main2">
+		<div class="breadcrumb-wrap">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-6">
+						<h4>菜单管理</h4>
+					</div>
+					<div class="col-sm-6 hidden-xs text-right">
+						<a onclick="query('','example')" class="btn btn-theme-dark">查询</a>
+						<a onclick="add()" class="btn btn-theme-dark">新增</a>
+						<a onclick="working()" class="btn btn-theme-dark">修改</a>
+						<a onclick="selectColumn('delete')" class="btn btn-theme-dark">删除</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div class="divide20"></div>
+		 <div id="div_example" class="container">
+			<table id="example" class="display cell-border" 
+				cellspacing="0" width="100%" ></table>
+		</div>
+	</div>
+
+</body>
+</html>

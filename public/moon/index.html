@@ -1,0 +1,63 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8">
+
+<!-- te3 frameWork -->
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script type="text/javascript" src="js/main.js"></script>
+
+<!-- jqueryMain -->
+<script type="text/javascript" src="../jquery/jquery1.12.js"></script>
+
+<!-- jqueryAlert -->
+<script type="text/javascript" src="../jquery/jquery.alert.js"></script>
+<link rel="stylesheet" type="text/css" href="../jquery/jquery.alert.css" />
+
+<!-- dataTables -->
+<script type="text/javascript" src="../datatables/js/jquery.js"></script>
+<script type="text/javascript" src="../datatables/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../datatables/js/dataTables.wrap.js"></script>
+<link rel="stylesheet" type="text/css" href="../datatables/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" type="text/css" href="../datatables/css/dataTables.wrap.css" />
+
+
+
+<script>
+function a(){
+	console.info(1);
+	$("#main").load("html/core.html");
+}
+
+function b(){
+	console.info(1);
+	$("#menubar").load("html/core2.html");
+} 
+
+function c(){
+	console.info("c");
+}
+
+</script>
+
+</head>
+
+
+<body>
+ <div id="container"><!--页面层容器-->
+  
+      <div id="header" >
+      <!--页面头部-->
+      <p onclick="a();">左面</p>
+      <p onclick="b();">右面</p>
+      </div>
+  		<div id="menubar"></div>
+      <div id="content"><!--内容部分-->
+        <div id="main" >123<!--主体部分--></div>
+         
+      </div> 
+     
+     <div id="footer"><!---底部--></div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,156 @@
+ <html>
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8">
+
+</head>
+ <body>
+ <!--navigation -->
+        <!-- Static navbar -->
+       
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <!-- style="font-size:1px;color:black;"s -->
+                   <h3 style="font-size:16px;color:black;margin-top:15px" class="nav navbar-nav"> <a  >诺基亚电信云</a></h3>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown ">
+                             <a href="index.html" class="dropdown-toggle " > 首页</a>
+                        </li>
+                        <!--menu home li end here-->
+                        <!-- 
+                        <li class="dropdown">
+                            <a href="akso-core.html" class="dropdown-toggle " > 测试</a>
+                        </li> -->
+                        <!--menu role user-->
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">权限管理 <i class="fa fa-angle-down"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                                 <li><a onclick="akso_new('../moon/menu.html')">菜单管理</a></li>                                                    
+                                  <li><a onclick="akso_new('../moon/role.html')">角色管理</a></li>
+                                  <li><a onclick="akso_new('../moon/user.html')">用户管理</a></li>
+                            </ul>
+                        </li>
+                        <!--menu role user-->
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">系统管理 <i class="fa fa-angle-down"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                                 <li><a onclick="akso_new('../moon/log.html')">日志查询</a></li>
+                                 <li><a onclick="akso_new('../moon/envariable.html')">环境变量设置</a></li>
+                            </ul>
+                        </li>
+                       
+                        <!--mega menu-->
+                        <li class="dropdown yamm-fw">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">云管中心  <i class="fa fa-angle-down"></i></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <div class="yamm-content">
+                                        <div class="row">
+											
+											<div class="col-sm-3">
+                                                <h3 class="heading">域&权限</h3>
+                                                <ul class="nav mega-vertical-nav">        
+                                                    <li><a onclick="akso_new('../cmp/domain.html')">域管理</a></li>
+                                                    
+                                                    <li><a onclick="akso_new('../cmp/project.html')">项目管理 </a></li>
+           
+                                                	<li><a onclick="akso_new('../cmp/role.html')">角色管理 </a></li>
+                                                	<li><a onclick="akso_new('../cmp/user.html')">用户管理 </a></li>
+                                                	<li><a onclick="akso_new('../cmp/group.html')">用户组管理 </a></li>
+                                                </ul>
+                                            </div>
+											
+                                            <div class="col-sm-3">
+                                                <h3 class="heading">资源管理</h3>
+                                                <ul class="nav mega-vertical-nav">        
+                                                    <li><a onclick="akso_new('../cmp/hypervisor.html')">宿主机</a></li>
+                                                    
+                                                    <li><a onclick="akso_new('../cmp/flavor.html')">虚拟硬件 </a></li>
+           
+                                                	<li><a onclick="akso_new('../cmp/glance.html')">镜像管理 </a></li>
+                                                	<li><a onclick="akso_new('../cmp/swift.html')">对象存储 </a></li>
+                                                	<li><a onclick="akso_new('../cmp/ceilometer.html')">计量统计 </a></li>
+                                                </ul>
+                                            </div>
+                                            
+                                            <div class="col-sm-3">
+                                                <h3 class="heading">主机&网络</h3>
+                                                <ul class="nav mega-vertical-nav">
+                                                	<li><a onclick="akso_new('../cmp/nova.html')">虚拟机 </a></li>
+                                                	<li><a onclick="akso_new('../cmp/neutron.html')">虚拟网络 </a></li>
+                                                    <li><a onclick="akso_new('../cmp/router.html')">路由管理</a></li>
+                                                                                                      
+                                                </ul>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <h3 class="heading">其他功能</h3>
+                                                <ul class="nav mega-vertical-nav">
+                                                    
+                                                    <li><a onclick="akso_new('../public/jtopo/jtopo.html')">主机监控</a></li>
+                                                     <li><a onclick="akso_new('../portal/akso-xsj.html')">测试</a></li>
+                      								<!-- 
+                                                    <li><a href="login-ragister-classic.html">登录 / 注册  </a></li>
+                                                     -->
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li> <!--menu Features li end here-->
+                        <!--mega menu end-->    
+
+                        <li class="dropdown">
+                            <a href="#" class=" dropdown-toggle" data-toggle="dropdown"><i class="fa fa-lock"></i> 登录</a>
+                            <div class="dropdown-menu dropdown-menu-right dropdown-login-box animated fadeInUp">
+                                <form role="form">
+                                    <h4>登录</h4>
+
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                            <input type="text" class="form-control" placeholder="用户名">
+                                        </div>
+                                        <br>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                            <input type="password" class="form-control" placeholder="密码">
+                                        </div>
+                                        <div class="checkbox pull-left">
+                                        <!-- 
+                                            <label>
+                                                <input type="checkbox"> Remember me
+                                            </label>-->
+                                        </div> 
+                                        <a class="btn btn-theme-bg pull-right">Login</a>
+                                        <!-- <button type="submit" class="btn btn-theme pull-right">Login</button>                 -->
+                                        <div class="clearfix"></div>
+                                        <hr>
+                                        <p>如果没有帐户! 
+                                        	<!-- 
+                                        	<a href="login-ragister-classic.html">现在注册</a>
+                                        	 -->
+                                        	<a onclick="jAlert('注册功能暂未开放，请联系管理员申请用户','提示信息');">现在注册</a>
+                                        
+			
+                                        </p>
+                                    </div>
+                                </form>
+                            </div>
+                        </li> <!--menu login li end here-->
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div><!--container-->
+        <!--navbar-default-->
+        
+        
+        
+ </body>
+</html>        

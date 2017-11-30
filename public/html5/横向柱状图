@@ -1,0 +1,178 @@
+function horizCharts(canvasId,dataList){
+				this.init(canvasId,dataList);
+			}
+			horizCharts.prototype={
+				canvas:null,
+				ctx:null,
+				colorList:new Array(),
+				sectorList:new Array(),
+				dataList:new Array(),
+				charSize:{width:0,height:0},
+				changeMark:-1,//当前激活对象
+				maxData:0,
+				originX:85,
+				originY:246,
+				requestId:undefined,
+				cntr:0,
+				countPercent:0,
+				init:function(canvasId,dataList){
+					this.canvas=document.createElement('canvas');
+					document.getElementById(canvasId).innerHTML = "";//获取canvas
+					document.getElementById(canvasId).appendChild(this.canvas);//获取canvas
+					this.ctx=this.canvas.getContext('2d');//2d绘画模式
+
+					this.dataList=dataList;
+					this.colorList=['rgba(254,139,94,1)','rgba(70,200,164,1)','rgba(74,150,161,1)','rgba(57,68,88,1)'];
+					this.colorList2=['rgba(254,139,94,.8)','rgba(70,200,164,.8)','rgba(74,150,161,.8)','rgba(57,68,88,.8)'];
+					this.loop();
+					var self=this;
+					window.addEventListener('resize', winResize);
+					function winResize(){
+						if(document.getElementById(canvasId)!=null){
+							self.canvas=document.createElement('canvas');
+							document.getElementById(canvasId).innerHTML = "";//获取canvas
+							document.getElementById(canvasId).appendChild(self.canvas);//获取canvas
+							self.ctx=self.canvas.getContext('2d');//2d绘画模式
+							//self.countPercent=0;
+							self.cntr=0;
+							self.loop();
+						}else{
+							window.removeEventListener('resize', winResize);
+						}
+					}
+				},
+				loop:function(){
+					var self=this;
+					this.requestId=requestAnimationFrame(self.loop.bind(this));//requestID 是一个长整型非零值,作为一个唯一的标识符.你可以将该值作为参数传给
+						//这就要求你的动画函数执行会先于浏览器重绘动作。通常来说，被调用的频率是每秒60次
+					if(this.cntr++ % 1 ==0){//多少次循环，执行添加一个圆
+						var x=0;
+						this.resize();
+						if(this.countPercent<100){
+							this.countPercent=this.countPercent+2;
+						}else{
+						  this.stop();
+						  this.canvas.addEventListener("mousemove",function(ev){
+								var ev=ev||window.event;
+								if(self.inColumn(ev)){
+								   self.chart();
+								}
+							});
+						}
+					}
+				},
+				stop:function(){
+					if(this.requestId){
+						window.cancelAnimationFrame(this.requestId);
+						this.requestId=undefined;
+					}
+				},
+				resize:function(){
+					this.charSize={width:this.canvas.parentNode.clientWidth,height:310};
+					this.canvas.width=this.charSize.width;
+					this.canvas.height=this.charSize.height;
+					this.chart();
+				},
+				chart:function(){
+					this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+					this.update();
+					this.default();
+					this.column();
+				},
+				update:function(){
+					//初始化数据
+					var x=0;
+					this.maxData=0;
+					for (x in this.dataList)
+					{
+						this.sectorList[x]={
+							type:this.dataList[x].type,
+							num:this.dataList[x].num,
+							//color:this.colorList[x],
+						};
+						if(this.dataList[x].num>this.maxData){
+							this.maxData=this.dataList[x].num;
+						}
+						if(x==this.changeMark){
+							this.sectorList[x].color=this.colorList2[x];
+						}else{
+							this.sectorList[x].color=this.colorList[x];
+						}
+					}
+
+					var maxWidth=this.charSize.width-this.originX-140;
+					//计算位置
+					var x=0;
+					for (x in this.sectorList)
+					{
+						this.sectorList[x].left=this.originX;
+						this.sectorList[x].right=this.originX+maxWidth*this.sectorList[x].num/this.maxData;
+						this.sectorList[x].bottom=this.originY-(x*43+58);
+						this.sectorList[x].top=this.sectorList[x].bottom-9;
+						this.sectorList[x].width=maxWidth*this.sectorList[x].num/this.maxData;
+						this.sectorList[x].height=17;
+					}
+
+				},
+				default:function(){
+					this.ctx.save();
+					this.ctx.beginPath();
+					var charWidth=this.charSize.width-140,charHeight=232,space=(charWidth-(charWidth/6-20))/5;
+					this.ctx.translate(this.originX,this.originY);//移动到坐标原点
+					this.ctx.moveTo(0,0);
+					this.ctx.lineTo(charWidth,0);
+					this.ctx.strokeStyle="#dbdbdb";
+					this.ctx.stroke();
+					this.ctx.lineTo(charWidth,0);
+					this.ctx.strokeStyle="#e4e4e4";
+					for(var i=0;i<6;i++){
+						this.ctx.dashedLineTo(space*i,0,space*i,-charHeight,3);
+					}
+					this.ctx.moveTo(charWidth,0);
+					this.ctx.fillStyle="#b1b1b1";
+					this.ctx.font = "14px Microsoft YaHei";
+					this.ctx.textAlign="left";
+					this.ctx.fillText("人数", charWidth+5,0);
+					this.ctx.closePath();
+			    	this.ctx.restore();
+				},
+				column:function(){
+					var x=0;
+					for (x in this.sectorList){
+						this.ctx.save();
+						this.ctx.beginPath();
+						this.ctx.fillStyle = this.sectorList[x].color;
+						this.ctx.fillRect(this.sectorList[x].left,this.sectorList[x].top,this.sectorList[x].width*this.countPercent/100,this.sectorList[x].height);
+						this.ctx.font = "14px Microsoft YaHei";
+						this.ctx.textAlign="right";
+						this.ctx.fillStyle = "#333";
+						this.ctx.fillText(this.sectorList[x].type, this.sectorList[x].left-8,this.sectorList[x].bottom+4);
+						this.ctx.textAlign="left";
+						if(x==this.changeMark){
+							this.ctx.font = "18px Microsoft YaHei";
+							this.ctx.fillStyle = "#4e5c76";
+							this.ctx.fillText(parseInt(this.sectorList[x].num*this.countPercent/100), this.sectorList[x].left+5+this.sectorList[x].width*this.countPercent/100,this.sectorList[x].bottom+6);
+						}else{
+							this.ctx.fillStyle = "#999";
+							this.ctx.fillText(parseInt(this.sectorList[x].num*this.countPercent/100), this.sectorList[x].left+5+this.sectorList[x].width*this.countPercent/100,this.sectorList[x].bottom+4);
+						}
+					}
+				},
+				inColumn:function(ev){
+					var tempActive=-1;
+					var x=0;
+					for (x in this.sectorList){
+						if(ev.offsetX>this.sectorList[x].left&&ev.offsetX<this.sectorList[x].right+20&&ev.offsetY>this.sectorList[x].top-5&&ev.offsetY<this.sectorList[x].bottom+5){
+							tempActive=x;
+						}
+					}
+					if(this.changeMark!=tempActive){
+			    		this.changeMark=tempActive;
+			    		return true;
+			    	}else{
+			    		this.changeMark=tempActive;
+			    		return false;
+			    	}
+				}
+
+			};

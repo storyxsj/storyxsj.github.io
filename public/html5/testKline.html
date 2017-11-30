@@ -1,0 +1,37 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+
+<link rel="stylesheet" type="text/css" href="pen.css" />
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="pen4stock.js"></script>
+
+<script>
+	// you special script
+	var mypen;
+	$(document).ready(function() {
+		test();
+	});
+
+	function test(){
+		mypen = new Pen("gg");
+
+		var node1 = new mypen.Node("test1");
+		node1.setLocation(560, 210);
+		node1.draw();
+		
+	}
+
+</script>
+
+
+</head>
+
+<body>
+		
+		<div id="gg" class="myCanvas"></div>
+
+</body>
+
+</html>

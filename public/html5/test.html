@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="800" height="650" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.
+</canvas>
+
+<script>
+
+var c=document.getElementById("myCanvas");
+var ctx=c.getContext("2d");
+
+
+ctx.beginPath();
+ctx.moveTo(100.5,20.5);
+ctx.lineTo(200.5,20.5);
+ctx.stroke();
+//ctx.beginPath();
+
+ctx.strokeRect(100, 100, 50, 50);
+
+ctx.moveTo(100.5,40.5);
+ctx.lineTo(200.5,40.5)
+ctx.strokeStyle = '#f00';
+ctx.strokeRect(200, 200, 50, 50);
+ctx.stroke();
+
+</script> 
+
+</body>
+</html>

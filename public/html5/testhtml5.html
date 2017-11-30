@@ -1,0 +1,112 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+
+<link rel="stylesheet" type="text/css" href="pen.css" />
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="pen.js"></script>
+<script type="text/javascript" src="menu4pen.js"></script>
+<script>
+	// you special script
+	var mypen;
+	$(document).ready(function() {
+		 
+		test();
+		menu4pen();
+		
+		//$("#ee").load("./menu4pen.html"); 
+	});
+
+	function test(){
+		mypen = new Pen("gg");
+
+		var node1 = new mypen.Circle("test1");
+		node1.setLocation(560, 210);
+		node1.draw();
+		
+		var node2 = new mypen.Choice("test2");
+		node2.setLocation(560, 330);
+		node2.draw();
+
+		var node3 = new mypen.Node("test3");
+		node3.setLocation(560, 446);
+		node3.draw();
+
+		var node4 = new mypen.Node("xsj");
+		node4.setLocation(220, 310);
+		node4.draw();
+
+		var node5 = new mypen.Node("tea");
+		node5.setLocation(230, 320);
+		node5.draw();
+		//node.drawCircle();
+
+		/**/
+		var node6 = new mypen.Node("moon");
+		node6.setLocation(320, 360);
+		node6.setImage("7.png");
+		node6.draw();
+
+		var line = new mypen.Line("小E");
+		line.link(node4, node6);
+		line.draw();
+	}
+
+	function selectModel(command) {
+		mypen.selectModel(command);
+	}
+
+	function edit(opt) {
+		mypen.edit(opt);
+	}
+</script>
+
+
+</head>
+
+<body>
+		<div id="movemenu" class="penMenuMain ">
+				<div class="penMenuHead">
+					<table>
+						<tr>
+							<td width="94%" title="可拖拽">&nbsp;菜单</td>
+							<td id="menuResize" width="4%" title="最小化" onclick="menuResize();">—</td>
+							<td width="2%">
+						</tr>
+					</table>
+				</div>
+				<div id="menubody" class="penMenuBody">
+					<table>
+						<tr>
+							<th >&nbsp;模式选择:</th>
+							<td onclick="selectModel('scrawl');">&nbsp;涂鸦</td>
+							<td onclick="selectModel('drag');">&nbsp;拖动</td>
+							<td onclick="selectModel('readOnly');">&nbsp;只读</td>
+						</tr>
+						<tr>
+							<th >&nbsp;操 &nbsp; 作:</th>
+							<td onclick="edit('delete');">&nbsp;删除</td>
+							<td onclick="edit('modify');">&nbsp;修改</td>
+							<td onclick="selectModel('line');">&nbsp;连线</td>
+
+						</tr>
+						<tr>
+							<th >&nbsp; &nbsp; </th>
+							<td onclick="edit('creatCircle');">&nbsp;新建圆</td>
+							<td onclick="edit('creatNode');">&nbsp;新建长方形</td>
+							<td onclick="edit('creatChoice');">&nbsp;新建菱形</td>
+							
+						</tr>
+					</table>
+				</div>
+
+			</div>
+
+		<div id="gg" class="myCanvas"></div>
+
+
+		<div id="ee">123</div>
+</body>
+
+</html>

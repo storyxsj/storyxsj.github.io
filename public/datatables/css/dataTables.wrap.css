@@ -1,0 +1,13 @@
+/**
+
+td.details-control {
+    background: url('../images/t_add.jpg') no-repeat center center;
+    cursor: pointer;
+}
+tr.details td.details-control {
+    background: url('../images/btn_pageup.png') no-repeat center center;
+}
+*/
+tr.highlight {
+    background-color: rgb(255,255,102) !important;
+}

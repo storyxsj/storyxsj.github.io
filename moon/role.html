@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>诺基亚电信云管平台</title>
+
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		//
+	});
+	
+	function query(tableId){
+		
+		var url = "role_query.do?opType=test1232";
+		te3ajax(url,showDataTable,tableId);
+		
+	}
+
+	function query2(tableId){
+		var url = "http://localhost:9999/akso";
+		te3ajaxp(url,showDataTable,tableId);
+	}
+	
+	
+</script>
+</head>
+<body>
+
+	<div id="akso-main2">
+		<div class="breadcrumb-wrap">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-6">
+						<h4>角色管理</h4>
+					</div>
+					<div class="col-sm-6 hidden-xs text-right">
+						<a onclick="query('example')" class="btn btn-theme-dark">查询</a>
+						<a onclick="working()" class="btn btn-theme-dark">新增</a>
+						<a onclick="working()" class="btn btn-theme-dark">修改</a>
+						<a onclick="working()" class="btn btn-theme-dark">删除</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div class="divide20"></div>
+		 <div id="div_example" class="container">
+			<table id="example" class="display cell-border" 
+				cellspacing="0" width="100%" ></table>
+		</div>
+	</div>
+
+</body>
+</html>
