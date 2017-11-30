@@ -1,0 +1,303 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8">
+
+
+<!-- te3 frameWork -->
+
+<script type="text/javascript" src="../public/moon/js/main.js"></script>
+
+<!-- jqueryMain -->
+<script type="text/javascript" src="../public/jquery/jquery1.12.js"></script>
+
+<!-- jqueryAlert -->
+<script type="text/javascript" src="../public/jquery/jquery.alert.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="../public/jquery/jquery.alert.css" />
+
+<!-- dataTables -->
+<script type="text/javascript" src="../public/datatables/js/jquery.js"></script>
+<script type="text/javascript"
+	src="../public/datatables/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript"
+	src="../public/datatables/js/dataTables.wrap.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="../public/datatables/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" type="text/css"
+	href="../public/datatables/css/dataTables.wrap.css" />
+
+
+<script type="text/javascript"
+	src="../public/layer/layer.js"></script>
+
+<link rel="stylesheet" type="text/css"
+	href="../public/layui/css/layui.css" />
+<script type="text/javascript"
+	src="../public/layui/layui.js"></script>
+
+<script type="text/javascript"
+	src="../public/echarts/echarts.min.js"></script>
+<script type="text/javascript"
+	src="../public/echarts/echarts.wrap.js"></script>
+
+
+<script>
+
+$(document).ready(function() {
+	// akso_init();
+	// main_init();
+});
+
+
+
+function jump(){
+	//$.ajax({'url':'http://money.finance.sina.com.cn/quotes_service/api/jsonp_v2.php/var%20_sz000731_5_1518135258158=/CN_MarketData.getKLineData?symbol=sz000731&scale=5&ma=no&datalen=8', 'dataType':'jsonp'}).always(function(d){kline(_sz000731_5_1518135258158,"kk")});
+	var baseURL = "http://money.finance.sina.com.cn/quotes_service/api/jsonp_v2.php";
+	var stockCode = "sz000731";//股票代码
+	var scale = "5";//数据周期
+	var datalen = "48";//个数
+	var now = new Date().getTime();
+	var paramName = "_"+stockCode+"_"+scale+"_"+now;//_sz000731_5_1518135258158
+	var url = baseURL+"/var%20"+paramName+"=/CN_MarketData.getKLineData?symbol="+stockCode+"&scale="+scale+"&ma=no&datalen="+datalen;
+	
+	console.info(url);
+	$.ajax({'url':url, 'dataType':'jsonp'}).always(function(d){kline(window[paramName],"kk")});
+}
+
+function kkformatData(jsonData){
+	var adata = [];
+	
+	var i=0;
+	for(var o in jsonData){
+		var sdata = [];
+		sdata[0] = jsonData[o].day;
+		sdata[1] = jsonData[o].open;
+		sdata[2] = jsonData[o].close;
+		sdata[3] = jsonData[o].low;
+		sdata[4] = jsonData[o].high;
+		
+		adata[i] = sdata;
+		i++;
+      }  
+	return adata;
+}
+
+function kline(jsonData,id){
+	console.info(jsonData);
+	rawData = kkformatData(jsonData);
+	
+	var dom = document.getElementById(id);
+	var myChart = echarts.init(dom);
+	
+	var app = {};
+
+	//var rawData = jsonData.reverse();
+	//var chan = jsonData.chan;
+
+	function calculateMA(dayCount, data) {
+		var result = [];
+		for (var i = 0, len = data.length; i < len; i++) {
+			if (i < dayCount) {
+				result.push('-');
+				continue;
+			}
+			var sum = 0;
+			for (var j = 0; j < dayCount; j++) {
+				sum += data[i - j][1];
+			}
+			result.push(sum / dayCount);
+		}
+		return result;
+	}
+	
+	var dates = rawData.map(function(item) {
+		return item[0];
+	});
+	
+	var data = rawData.map(function(item) {//O,C,L,H
+		return [ +item[1], +item[2], +item[3], +item[4] ];
+	});
+	var option = {
+		backgroundColor : '#21202D',
+		legend : {
+			data : [ '日K', 'MA5', 'MA10', 'MA20', 'MA30' ],
+			inactiveColor : '#777',
+			textStyle : {
+				color : '#fff'
+			}
+		},
+		
+		 toolbox: {
+		        show : true,
+		        feature : {
+		            mark : {show: true},
+		            dataZoom : {show: true},
+		            dataView : {show: true, readOnly: false},
+		            restore : {show: true},
+		            saveAsImage : {show: true}
+		        }
+		    },
+		tooltip : {
+			trigger : 'axis',
+			 formatter: function (params) {
+				 console.info(params.componentType);
+				 if("markLine"==params.componentType){
+					 var res = "线段起始于："+params.data.xAxis;
+					 return res;
+				 }else{
+					 console.info(params);
+					 var _data = params.data;
+						//console.info(params.data);
+			            var res = "时间："+params.name;
+			            res += '<br/>  开盘 : ' + _data[0] + '  最高 : ' + _data[3];
+			            res += '<br/>  收盘 : ' + _data[1] + '  最低 : ' + _data[2];
+			            return res;
+				 }
+				
+		        },
+			axisPointer : {
+				animation : false,
+				type : 'cross',
+				lineStyle : {
+					color : '#376df4',
+					width : 2,
+					opacity : 1
+				}
+			}
+		},
+		xAxis : {
+			type : 'category',
+			data : dates,
+			axisLine : {
+				lineStyle : {
+					color : '#8392A5'
+				}
+			}
+		},
+		yAxis : {
+			scale : true,
+			axisLine : {
+				lineStyle : {
+					color : '#8392A5'
+				}
+			},
+			splitLine : {
+				show : false
+			}
+		},
+		grid : {
+			bottom : 80
+		},
+		dataZoom : [
+				{
+					textStyle : {
+						color : '#8392A5'
+					},
+					handleIcon : 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+					handleSize : '80%',
+					dataBackground : {
+						areaStyle : {
+							color : '#8392A5'
+						},
+						lineStyle : {
+							opacity : 0.8,
+							color : '#8392A5'
+						}
+					},
+					handleStyle : {
+						color : '#fff',
+						shadowBlur : 3,
+						shadowColor : 'rgba(0, 0, 0, 0.6)',
+						shadowOffsetX : 2,
+						shadowOffsetY : 2
+					}
+				}, {
+					type : 'inside'
+				} ],
+
+		animation : false,
+		series : [
+				{
+					type : 'candlestick',
+					name : '日K',
+					data : data,
+					itemStyle : {
+						normal : {
+							color : '#FD1050',
+							color0 : '#0CF49B',
+							borderColor : '#FD1050',
+							borderColor0 : '#0CF49B'
+						}
+					},
+					
+					//画线
+					
+					// markLine: {
+					//	 symbol: ['none', 'none'],
+			        //     data: chan
+			        // },
+
+					//画点
+					
+					
+					
+
+				},
+
+				{
+					name : 'MA5',
+					type : 'line',
+					data : calculateMA(5, data),
+					smooth : true,
+					showSymbol : false,
+					lineStyle : {
+						normal : {
+							width : 1
+						}
+					}
+				}, {
+					name : 'MA10',
+					type : 'line',
+					data : calculateMA(10, data),
+					smooth : true,
+					showSymbol : false,
+					lineStyle : {
+						normal : {
+							width : 1
+						}
+					}
+				}, {
+					name : 'MA20',
+					type : 'line',
+					data : calculateMA(20, data),
+					smooth : true,
+					showSymbol : false,
+					lineStyle : {
+						normal : {
+							width : 1
+						}
+					}
+				}, {
+					name : 'MA30',
+					type : 'line',
+					data : calculateMA(30, data),
+					smooth : true,
+					showSymbol : false,
+					lineStyle : {
+						normal : {
+							width : 1
+						}
+					}
+				} ]
+	};
+	myChart.setOption(option, true);
+}
+
+
+</script>
+</head>
+<body>
+<div onclick="jump();">hi,public~</div>
+<div id="kk" style="height: 450px;width:90%"></div>
+</body>
+</html>
