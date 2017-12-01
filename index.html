@@ -1,13 +1,20 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html;charset=utf-8">
+<script type="text/javascript" src="public/jquery/jquery1.12.js"></script>
+
 <script>
-function jump(){ 
-	window.location.href="public/index.html"; 
-}  
+$(document).ready(function() {
+	$("#akso-main").empty();
+	$("#akso-main").load("public/index.html");
+});
+  
 </script>
 </head>
 <body>
-<div onclick="jump();">hi,Storyxsj~</div>
+<div id="akso-main" >
+
+</div>
+
 </body>
 </html>

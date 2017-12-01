@@ -95,7 +95,7 @@ function te3ajaxp(url,method,a,b,c){
 		url: url,
 		cache: false ,
 		dataType: "jsonp",
-		jsonp:"callback",    
+		jsonp:"var%20_sz000731_5_1508135258158=",    
 		jsonpCallback:"success_jsonp",
 		success: function(data){
 			
@@ -108,7 +108,7 @@ function te3ajaxp(url,method,a,b,c){
 		},
 		error:function(data){
 			
-			alert("error"+data);
+			console.info("error"+data);
 		}
 	});
 }

@@ -62,7 +62,7 @@ function kline(jsonData,id){
 		}
 		return result;
 	}
-	
+	console.info(rawData);
 	var dates = rawData.map(function(item) {
 		return item[0];
 	});
@@ -90,17 +90,22 @@ function kline(jsonData,id){
 		            saveAsImage : {show: true}
 		        }
 		    },
-		    
-		    
-		    
 		tooltip : {
 			trigger : 'axis',
-			formatter: function (params) {
-				
-				  var res = params[0].seriesName + ' ' + params[0].name;
-		            res += '<br/>  开盘 : ' + params[0].value[1] + '  最高 : ' + params[0].value[4];
-		            res += '<br/>  收盘 : ' + params[0].value[2] + '  最低 : ' + params[0].value[3];
-		            return res;
+			 formatter: function (params) {
+				 //console.info(params.componentType);
+				 if("markLine"==params.componentType){
+					 var res = "线段起始于："+params.data.xAxis;
+					 return res;
+				 }else{
+					 //console.info(params);
+					 var _data = params.data;
+						//console.info(params.data);
+			            var res = "时间："+params.name;
+			            res += '<br/>  开盘 : ' + _data[0] + '  最高 : ' + _data[3];
+			            res += '<br/>  收盘 : ' + _data[1] + '  最低 : ' + _data[2];
+			            return res;
+				 }
 				
 		        },
 			axisPointer : {
@@ -182,9 +187,6 @@ function kline(jsonData,id){
 					
 					 markLine: {
 						 symbol: ['none', 'none'],
-						 itemStyle:{
-					            normal:{lineStyle:{type:'solid',color:'#E800E8',width:'3'},label:{show:true,position:'left'}}
-					            },
 			             data: chan
 			         },
 
@@ -242,12 +244,4 @@ function kline(jsonData,id){
 				} ]
 	};
 	myChart.setOption(option, true);
-	
-	/*
-	window.addEventListener("resize", function () {
-		 
-        option.chart.resize();
-
-      });
-      */
 }
