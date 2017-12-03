@@ -53,71 +53,7 @@ function test(){
 	console.info(b);
 }
 
-var c;
-function jump(day){
-	var a = $("input[name='stockName']").val();
-	if(a == ""){
-		layer.msg("请输入股票代码");
-		return;
-	}
-	var b = $("input[name='stockPasswd']").val();
-	
-	if(b == ""){
-		b = c;
-	}else{
-		c = b;
-	}
-	
-	
-	var baseURL = "https://money.finance.sina.com.cn/quotes_service/api/json"+b+".php";
-	var stockCode = a;//股票代码
-	var scale = day;//数据周期  日线240
-	var datalen = "200";//个数
-	var now = new Date().getTime();
-	var paramName = "_"+stockCode+"_"+scale+"_"+now;//_sz000731_5_1518135258158
-	var url = baseURL+"/var%20"+paramName+"=/CN_MarketData.getKLineData?symbol="+stockCode+"&scale="+scale+"&ma=no&datalen="+datalen;
-	
-	
-	$.ajax({'url':url, 'dataType':'jsonp'}).always(function(d){kline(window[paramName],"kk")});
-}
 
-function kkformatData(jsonData){
-	var adata = [];
-	var i=0;
-	for(var o in jsonData){
-		var sdata = [];
-		sdata[0] = jsonData[o].day;
-		sdata[1] = jsonData[o].open;
-		sdata[2] = jsonData[o].close;
-		sdata[3] = jsonData[o].low;
-		sdata[4] = jsonData[o].high;
-		adata[i] = sdata;
-		i++;
-      }  
-
-	var day = [];
-	var open = [];
-	var close = [];
-	var low = [];
-	var high = [];
-	for(var j=0;j<i;j++){
-		day[j] = adata[i-1-j][0];
-		open[j] = adata[i-1-j][1];
-		close[j] = adata[i-1-j][2];
-		low[j] = adata[i-1-j][3];
-		high[j] = adata[i-1-j][4];
-	}
-	
-	
-	layuitableInsert("day",day);
-	layuitableInsert("open",open);
-	layuitableInsert("close",close);
-	layuitableInsert("low",low);
-	layuitableInsert("high",high);
-	
-	chan(day,open,close,low,high);
-	return adata;
-}
 
 
 
