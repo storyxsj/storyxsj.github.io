@@ -48,9 +48,7 @@ $(document).ready(function() {
 function test(){
 	var a = $("input[name='stockName']").val();
 	var b = $("input[name='stockPasswd']").val();
-	if(a == ""){
-		console.info(1);
-	}
+	
 	console.info(a);
 	console.info(b);
 }
@@ -63,15 +61,14 @@ function jump(day){
 		return;
 	}
 	var b = $("input[name='stockPasswd']").val();
-	console.info("b0:"+b);
+	
 	if(b == ""){
 		b = c;
 	}else{
 		c = b;
 	}
 	
-	console.info("a:"+a);
-	console.info("b:"+b);
+	
 	var baseURL = "https://money.finance.sina.com.cn/quotes_service/api/json"+b+".php";
 	var stockCode = a;//股票代码
 	var scale = day;//数据周期  日线240
@@ -80,7 +77,7 @@ function jump(day){
 	var paramName = "_"+stockCode+"_"+scale+"_"+now;//_sz000731_5_1518135258158
 	var url = baseURL+"/var%20"+paramName+"=/CN_MarketData.getKLineData?symbol="+stockCode+"&scale="+scale+"&ma=no&datalen="+datalen;
 	
-	console.info(url);
+	
 	$.ajax({'url':url, 'dataType':'jsonp'}).always(function(d){kline(window[paramName],"kk")});
 }
 
