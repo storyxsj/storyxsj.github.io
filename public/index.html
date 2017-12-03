@@ -45,13 +45,36 @@ $(document).ready(function() {
 	
 });
 
+function test(){
+	var a = $("input[name='stockName']").val();
+	var b = $("input[name='stockPasswd']").val();
+	if(a == ""){
+		console.info(1);
+	}
+	console.info(a);
+	console.info(b);
+}
 
-
-function jump(){
-	//$.ajax({'url':'http://money.finance.sina.com.cn/quotes_service/api/jsonp_v2.php/var%20_sz000731_5_1518135258158=/CN_MarketData.getKLineData?symbol=sz000731&scale=5&ma=no&datalen=8', 'dataType':'jsonp'}).always(function(d){kline(_sz000731_5_1518135258158,"kk")});
-	var baseURL = "https://money.finance.sina.com.cn/quotes_service/api/jsonp_v2.php";
-	var stockCode = "sz000731";//股票代码
-	var scale = "240";//数据周期
+var c;
+function jump(day){
+	var a = $("input[name='stockName']").val();
+	if(a == ""){
+		layer.msg("请输入股票代码");
+		return;
+	}
+	var b = $("input[name='stockPasswd']").val();
+	console.info("b0:"+b);
+	if(b == ""){
+		b = c;
+	}else{
+		c = b;
+	}
+	
+	console.info("a:"+a);
+	console.info("b:"+b);
+	var baseURL = "https://money.finance.sina.com.cn/quotes_service/api/json"+b+".php";
+	var stockCode = a;//股票代码
+	var scale = day;//数据周期  日线240
 	var datalen = "200";//个数
 	var now = new Date().getTime();
 	var paramName = "_"+stockCode+"_"+scale+"_"+now;//_sz000731_5_1518135258158
@@ -104,75 +127,31 @@ function kkformatData(jsonData){
 </script>
 </head>
 <body>
-<div onclick="jump();">hi,public~</div>
+<div class="layui-row">
+<br>
+</div>
+
+<div class="layui-row">
+	<div class="layui-col-md4">
+		股票代码：<input type="text" name="stockName" required  lay-verify="required" placeholder="请输入股票代码" autocomplete="off" >
+	</div>
+	<div class="layui-col-md4">
+		密码：<input type="text" name="stockPasswd" required  lay-verify="required" placeholder="请输入密码" autocomplete="off" >
+	</div>
+	<div class="layui-col-md4">
+		
+	</div>
+</div>
+<div class="layui-row"></div>
+
+<button class="layui-btn" onclick="jump('5');">5分钟</button>
+<button class="layui-btn" onclick="jump('30');">30分钟</button>
+<button class="layui-btn" onclick="jump('240');">日线</button>
+<button class="layui-btn" onclick="test('240');">测试用</button>
 <div id="kk" style="height: 450px;width:90%"></div>
 
-<form class="layui-form" style="width: 90%;">
- <div class="layui-form-item">
-    <label class="layui-form-label">名称</label>
-    <div class="layui-input-block">
-      <input type="text" name="name" required  lay-verify="required" placeholder="请输入，必选" autocomplete="off" class="layui-input">
-    </div>
-  </div>
-  
-  <div class="layui-form-item">
-    <label class="layui-form-label">内存(MB)</label>
-    <div class="layui-input-block">
-      <input type="text" name="ram" required  lay-verify="required" placeholder="请输入，必选" autocomplete="off" class="layui-input">
-    </div>
-  </div>
-  
-  <div class="layui-form-item">
-    <label class="layui-form-label">VCPU个数</label>
-    <div class="layui-input-block">
-      <input type="text" name="vcpus" required  lay-verify="required" placeholder="请输入，必选" autocomplete="off" class="layui-input">
-    </div>
-  </div>
-  
-  <div class="layui-form-item">
-    <label class="layui-form-label">磁盘(G)</label>
-    <div class="layui-input-block">
-      <input type="text" name="disk" required  lay-verify="required" placeholder="请输入，必选" autocomplete="off" class="layui-input">
-    </div>
-  </div>
-  
-  <div class="layui-form-item">
-    <label class="layui-form-label">ephemeral</label>
-    <div class="layui-input-block">
-      <input type="text" name="ephemeral" required  lay-verify="required" placeholder="请输入，必选，建议值：0" autocomplete="off" class="layui-input">
-    </div>
-  </div>
-  
-  <div class="layui-form-item">
-    <label class="layui-form-label">swap</label>
-    <div class="layui-input-block">
-      <input type="text" name="swap" required  lay-verify="required" placeholder="请输入，必选，取值可为：0" autocomplete="off" class="layui-input">
-    </div>
-  </div>
-  
-  <div class="layui-form-item">
-    <label class="layui-form-label">rxtxFactor</label>
-    <div class="layui-input-block">
-      <input type="text" name="rxtxFactor" required  lay-verify="required" placeholder="请输入，必选，建议值：1" autocomplete="off" class="layui-input">
-    </div>
-  </div>
-  
 
-  <div class="layui-form-item">
-    <label class="layui-form-label">isPublic</label>
-    <div class="layui-input-block">
-      <input type="radio" name="isPublic" value="true" title="true" checked>
-      <input type="radio" name="isPublic" value="false" title="false" >
-    </div>
-  </div>
- 
-  <div class="layui-form-item">
-    <div class="layui-input-block">
-      <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
-      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-    </div>
-  </div>
-</form>
+
 
 
 </body>
