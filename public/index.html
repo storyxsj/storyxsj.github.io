@@ -42,20 +42,84 @@
 <script>
 
 $(document).ready(function() {
-	
+	//schema()
 });
 
-function test(){
-	var a = $("input[name='stockName']").val();
-	var b = $("input[name='stockPasswd']").val();
+function schema(){
+
+	setInterval(function(){
+		console.info("----------");
+		fs();
+    }, 10000);
 	
-	console.info(a);
-	console.info(b);
 }
 
 
 
+function fs(){
+	var fs_img='<img src="http://image.sinajs.cn/newchart/min/n/sz000731.gif" />';
+	 $("#div_fs").empty();
+	 $("#div_fs").append(fs_img);
+}
 
+function init(){
+	$("input[name='stockName']").val('sz000731');
+	
+}
+
+function test(){
+	var list2 = [];
+	list2.push(2);
+	list2.push(1);
+	list2.push(3);
+	list2.push(1.5);
+	list2.push(4);
+	list2.push(2.8);
+	list2.push(5);
+	list2.push(3.9);
+	list2.push(4.2);
+	list2.push(2.4);
+	list2.push(4.0);
+	console.info(list2);
+	
+	
+	
+	var ft = 0;
+	var len = list2.length;
+	if(len <4){
+		return;
+	}
+	
+	if(parseFloat(list2[0])>parseFloat(list2[1])){
+		ft = 1;
+		
+		var _H = list2[0];
+		var _L = list2[1];
+	}else{
+		var _H = list2[1];
+		var _L = list2[0];
+	}
+	
+	
+	for(var i=2;i<len-1;i++){
+		if(parseFloat(list2[i])>parseFloat(list2[i-2])){
+			if(parseFloat(list2[i+1])>parseFloat(list2[i-1])){
+				console.info("上涨"+list2[i]);
+				if(parseFloat(list2[i])>parseFloat(list2[i-1])){
+					_H = list2[i];
+				}
+			}else{
+				console.info("调整"+list2[i]);
+			}
+		}else if(parseFloat(list2[i])<parseFloat(list2[i-2])){
+			if(parseFloat(list2[i+1])<parseFloat(list2[i-1])){
+				console.info("下跌"+list2[i]);
+			}else{
+				console.info("调整"+list2[i]);
+			}
+		}
+	}
+}
 
 </script>
 </head>
@@ -77,14 +141,21 @@ function test(){
 </div>
 <div class="layui-row"></div>
 
+
 <button class="layui-btn" onclick="jump('5');">5分钟</button>
 <button class="layui-btn" onclick="jump('30');">30分钟</button>
 <button class="layui-btn" onclick="jump('240');">日线</button>
-<button class="layui-btn" onclick="test('240');">测试用</button>
+
+<button class="layui-btn" onclick="fs('240');">分时</button>
+
+<button class="layui-btn" onclick="init('240');">【自动】</button>
+<button class="layui-btn" onclick="test('240');">【测试】</button>
 <div id="kk" style="height: 450px;width:90%"></div>
 
 
+<div id="div_fs">
 
+</div>
 
 
 </body>

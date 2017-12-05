@@ -45,7 +45,7 @@ function kline(jsonData,id){
 
 	
 	var chan = _CHAN;
-	
+	var point = _SURE;
 	
 	function calculateMA(dayCount, data) {
 		var result = [];
@@ -70,10 +70,19 @@ function kline(jsonData,id){
 	var data = rawData.map(function(item) {//O,C,L,H
 		return [ +item[1], +item[2], +item[3], +item[4] ];
 	});
+	
+	var _cd = layui.data('layuitable')._cd;
+	if(parseInt(_cd)<61){
+		_cd = _cd+"分";
+	}else if(_cd == 240){
+		_cd = "日线";
+	}else{
+		;
+	}	
 	var option = {
 		backgroundColor : '#21202D',
 		legend : {
-			data : [ '日K', 'MA5', 'MA10', 'MA20', 'MA30' ],
+			data : [ _cd, '短期线', '中期线', '年线' ],
 			inactiveColor : '#777',
 			textStyle : {
 				color : '#fff'
@@ -167,7 +176,7 @@ function kline(jsonData,id){
 		series : [
 				{
 					type : 'candlestick',
-					name : '日K',
+					name : _cd,
 					data : data,
 					itemStyle : {
 						normal : {
@@ -189,36 +198,31 @@ function kline(jsonData,id){
 			         },
 
 					//画点
-					
-					
-					
+			         markPoint: {
+			         data: point
+			        /*
+			         [
+			        	 
+		                    {
+		                        name: 'XX标点',
+		                        coord: ['2016-12-14', 8.61],
+		                        value: 8.62,
+		                        itemStyle: {
+		                            normal: {color: 'rgb(41,60,85)'}
+		                        }
+		                    },
+		                    
+		                    {
+		                        coord: ['2017-05-15', 8.63]
+		                    }
+		                    ]
+		*/
+			         }
 
 				},
 
 				{
-					name : 'MA5',
-					type : 'line',
-					data : calculateMA(5, data),
-					smooth : true,
-					showSymbol : false,
-					lineStyle : {
-						normal : {
-							width : 1
-						}
-					}
-				}, {
-					name : 'MA10',
-					type : 'line',
-					data : calculateMA(10, data),
-					smooth : true,
-					showSymbol : false,
-					lineStyle : {
-						normal : {
-							width : 1
-						}
-					}
-				}, {
-					name : 'MA20',
+					name : '短期线',
 					type : 'line',
 					data : calculateMA(20, data),
 					smooth : true,
@@ -229,9 +233,9 @@ function kline(jsonData,id){
 						}
 					}
 				}, {
-					name : 'MA30',
+					name : '中期线',
 					type : 'line',
-					data : calculateMA(30, data),
+					data : calculateMA(60, data),
 					smooth : true,
 					showSymbol : false,
 					lineStyle : {
@@ -239,7 +243,19 @@ function kline(jsonData,id){
 							width : 1
 						}
 					}
-				} ]
+				}, {
+					name : '年线',
+					type : 'line',
+					data : calculateMA(250, data),
+					smooth : true,
+					showSymbol : false,
+					lineStyle : {
+						normal : {
+							width : 1
+						}
+					}
+				}
+				]
 	};
 	myChart.setOption(option, true);
 	

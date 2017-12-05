@@ -120,11 +120,12 @@ function jump(day){
 		c = b;
 	}
 	
+	layuitableInsert("_cd",day);
 	
 	var baseURL = "https://money.finance.sina.com.cn/quotes_service/api/json"+b+".php";
 	var stockCode = a;//股票代码
 	var scale = day;//数据周期  日线240
-	var datalen = "400";//个数
+	var datalen = "800";//个数
 	var now = new Date().getTime();
 	var paramName = "_"+stockCode+"_"+scale+"_"+now;//_sz000731_5_1518135258158
 	var url = baseURL+"/var%20"+paramName+"=/CN_MarketData.getKLineData?symbol="+stockCode+"&scale="+scale+"&ma=no&datalen="+datalen;
