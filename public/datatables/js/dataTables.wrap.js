@@ -105,7 +105,7 @@ function format_dt_detail(d){
 }
 
 
-var c;
+var _stockPasswd;
 function jump(day){
 	var a = $("input[name='stockName']").val();
 	if(a == ""){
@@ -115,9 +115,9 @@ function jump(day){
 	var b = $("input[name='stockPasswd']").val();
 	
 	if(b == ""){
-		b = c;
+		b = _stockPasswd;
 	}else{
-		c = b;
+		_stockPasswd = b;
 	}
 	
 	layuitableInsert("_cd",day);
@@ -130,7 +130,7 @@ function jump(day){
 	var paramName = "_"+stockCode+"_"+scale+"_"+now;//_sz000731_5_1518135258158
 	var url = baseURL+"/var%20"+paramName+"=/CN_MarketData.getKLineData?symbol="+stockCode+"&scale="+scale+"&ma=no&datalen="+datalen;
 	
-	
+	console.info(url);
 	$.ajax({'url':url, 'dataType':'jsonp'}).always(function(d){kline(window[paramName],"kk")});
 }
 
@@ -147,7 +147,7 @@ function kkformatData(jsonData){
 		adata[i] = sdata;
 		i++;
       }  
-
+	console.info("Data length is"+adata.length);
 	var day = [];
 	var open = [];
 	var close = [];

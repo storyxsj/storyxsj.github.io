@@ -105,7 +105,7 @@ function kline(jsonData,id){
 		tooltip : {
 			trigger : 'axis',
 			formatter: function (params) {
-				
+					
 				  var res = params[0].seriesName + ' ' + params[0].name;
 		            res += '<br/>  开盘 : ' + params[0].value[1] + '  最高 : ' + params[0].value[4];
 		            res += '<br/>  收盘 : ' + params[0].value[2] + '  最低 : ' + params[0].value[3];
@@ -192,10 +192,12 @@ function kline(jsonData,id){
 					 markLine: {
 						 symbol: ['none', 'none'],
 						 itemStyle:{
-					            normal:{lineStyle:{type:'solid',color:'#E800E8',width:'3'},label:{show:true,position:'left'}}
+					            normal:{lineStyle:{type:'solid',color:'#E800E8',width:'2'},label:{show:true,position:'left'}}
 					            },
 			             data: chan
 			         },
+			         
+			         
 
 					//画点
 			         markPoint: {

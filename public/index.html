@@ -1,4 +1,4 @@
-<html>
+﻿<html>
 <head>
 <meta http-equiv="content-type" content="text/html;charset=utf-8">
 
@@ -64,10 +64,12 @@ function fs(){
 
 function init(){
 	$("input[name='stockName']").val('sz000731');
-	
+	$("input[name='stockPasswd']").val('');	
 }
 
+
 function test(){
+	/*
 	var list2 = [];
 	list2.push(2);
 	list2.push(1);
@@ -80,44 +82,129 @@ function test(){
 	list2.push(4.2);
 	list2.push(2.4);
 	list2.push(4.0);
+	list2.push(2.1);
+	list2.push(3.3);
+	list2.push(2.5);
+	list2.push(4.5);
+	list2.push(3.8);
+	list2.push(4.2);
+	list2.push(2.9);
+	*/
+	var list2 = [2.7,1,2,1.5,3,2.5,4,3.5,5,1.7,2.7,2,4,3,4.5];
 	console.info(list2);
 	
+	var list1 = [];
+	for(var i=0;i<100;i++){
+		list1.push(i);
+	}
 	
+	xianduan(list2,list1);
+}
+
+function xianduan(list2,list1){
 	
 	var ft = 0;
 	var len = list2.length;
 	if(len <4){
 		return;
 	}
-	
+	var _H;
+	var _L;
+	var _HT;
+	var _LT;
 	if(parseFloat(list2[0])>parseFloat(list2[1])){
 		ft = 1;
 		
-		var _H = list2[0];
-		var _L = list2[1];
+		 _H = list2[0];
+		 _L = list2[1];
+		 _HT = list1[0];
+		 _LT = list1[1];
 	}else{
-		var _H = list2[1];
-		var _L = list2[0];
+		 _H = list2[1];
+		 _L = list2[0];
+		 _HT = list1[1];
+		 _LT = list1[0];
 	}
 	
-	
-	for(var i=2;i<len-1;i++){
-		if(parseFloat(list2[i])>parseFloat(list2[i-2])){
-			if(parseFloat(list2[i+1])>parseFloat(list2[i-1])){
-				console.info("上涨"+list2[i]);
-				if(parseFloat(list2[i])>parseFloat(list2[i-1])){
-					_H = list2[i];
+	var _Q = 2;
+	var _LQ = 0;
+	var _HQ = 0;
+	for(var i=3;i<len-1;i++){
+		if(ft == 1){//低点->
+			ft = 0;
+			if(parseFloat(list2[i])<parseFloat(list2[i-2])&&
+					parseFloat(list2[i-1])<parseFloat(list2[i-3])){
+				_LQ++;
+				_HQ = 0;
+				/*
+				if(_LQ==1){
+					console.info("[线段]起始高点："+list1[i-3]+" "+list2[i-3]);
 				}
-			}else{
-				console.info("调整"+list2[i]);
+				*/
+				console.info("[线段-下跌] 起始："+list1[i-3]+" "+list2[i-3]+"终结："+list1[i]+" "+list2[i]);
+				
 			}
-		}else if(parseFloat(list2[i])<parseFloat(list2[i-2])){
-			if(parseFloat(list2[i+1])<parseFloat(list2[i-1])){
-				console.info("下跌"+list2[i]);
-			}else{
-				console.info("调整"+list2[i]);
+			
+		}else{//高点
+			ft = 1;
+			if(parseFloat(list2[i])>parseFloat(list2[i-2])&&
+					parseFloat(list2[i-1])>parseFloat(list2[i-3])){
+				_HQ++;
+				_LQ = 0;
+				/*
+				if(_HQ==1){
+					console.info("[线段]起始低点："+list1[i-3]+" "+list2[i-3]);
+				}
+				*/
+				console.info("[线段-上涨] 起始: "+list1[i-3]+" "+list2[i-3]+"终结："+list1[i]+" "+list2[i]);
+				
 			}
 		}
+		
+		/*
+		if(parseFloat(list2[i])>parseFloat(list2[i-2])){
+			if(parseFloat(list2[i+1])>parseFloat(list2[i-1])&&
+					parseFloat(list2[i+2])>parseFloat(list2[i])){
+				console.info("上涨"+list1[i]);
+				if(_Q == 0){
+					console.info("趋势切换"+list2[i]+" G:"+_H+" D:"+_L+"输出:"+_L+" "+_LT);
+					_H = list2[i];
+					_HT = list1[i];
+				}else if(_Q == 2){
+					console.info("输出:"+_L+" "+_LT);
+				}
+				_Q = 1;
+				if(parseFloat(list2[i])>parseFloat(list2[i-1])&&
+						parseFloat(list2[i])>parseFloat(_H)){//如果是高点
+					_H = list2[i];
+					//console.info("G:"+_H+" D:"+_L);
+				}
+			}else{
+				console.info("调整"+list1[i]);
+			}
+		}else if(parseFloat(list2[i])<parseFloat(list2[i-2])){
+			if(parseFloat(list2[i+1])<parseFloat(list2[i-1])&&
+					parseFloat(list2[i+2])<parseFloat(list2[i])){
+				console.info("下跌"+list1[i]);
+				if(_Q == 1){
+					console.info("趋势切换"+list2[i]+" G:"+_H+" D:"+_L+"输出:"+_H+" "+_HT);
+					_L = list2[i];
+					_LT = list1[i];
+				}else if(_Q == 2){
+					console.info("输出:"+_H+" "+_HT);
+				}
+				_Q = 0;
+				if(parseFloat(list2[i])<parseFloat(list2[i-1])&&
+						parseFloat(list2[i])<parseFloat(_L)){//如果是低点
+					_L = list2[i];
+					//console.info("G:"+_H+" D:"+_L);
+				}
+			}else{
+				console.info("调整"+list1[i]);
+			}
+		}	
+			*/
+		
 	}
 }
 
@@ -149,7 +236,7 @@ function test(){
 <button class="layui-btn" onclick="fs('240');">分时</button>
 
 <button class="layui-btn" onclick="init('240');">【自动】</button>
-<button class="layui-btn" onclick="test('240');">【测试】</button>
+<button class="layui-btn" onclick="test();">【测试】</button>
 <div id="kk" style="height: 450px;width:90%"></div>
 
 
